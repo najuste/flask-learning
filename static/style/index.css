@@ -1,0 +1,33 @@
+
+body {
+    background-color: #fbf8ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+main {
+    min-width: 500px;
+    max-width: 900px;
+    background: #fff;
+    padding: 2em;
+}
+
+#flashed-messages {
+    position: absolute;
+    background: #ccc;
+    top: 5px;
+    width: 500px;
+}
+
+#flashed-messages .
+
+
+#list ul {
+    padding: 0;
+}
+
+#list li {
+    display: flex;
+    justify-content: space-between;
+}
