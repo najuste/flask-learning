@@ -1,10 +1,13 @@
 
 body {
     background-color: #fbf8ef;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    }
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 2em 0;
+}
 
 main {
     min-width: 500px;
