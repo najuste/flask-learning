@@ -10,7 +10,6 @@ class Task(db.Model):
     created_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     assigned_to_id = db.Column(db.Integer, nullable=True)
 
-
     def __repr__(self):
         """method of how the class is going to be printed"""
         return '<Task {}>'.format(self.title)

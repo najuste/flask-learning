@@ -1,7 +1,7 @@
 {% extends "root.html" %}
 
 {% block main %}
-<h1>Todo List</h1>
+<h1>Todo List of {{ current_user.username }}</h1>
 <div id="list">
     <ul>
         {% for item in items %}
