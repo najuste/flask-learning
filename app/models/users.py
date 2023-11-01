@@ -1,3 +1,5 @@
+from hashlib import md5
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login
 from flask_login import UserMixin
@@ -25,3 +27,7 @@ class User(UserMixin, db.Model):
 
     def is_password_correct(self, password: str):
         return check_password_hash(self.password_hash, password)
+
+    def avatar(self):
+        email_digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s=50'.format(email_digest)

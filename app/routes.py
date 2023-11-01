@@ -62,6 +62,18 @@ def index():
     return render_template('main.html', items=todo_list)
 
 
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    given_user = User.query.filter_by(username=username).first_or_404()
+    todo_list = [
+        {'author': given_user, 'task': 'Todo #1'},
+        {'author': given_user, 'task': 'Todo #2'}
+    ]
+    todo_items=[item['task'] for item in todo_list]
+    return render_template('user.html', user=given_user, items=todo_items)
+
+
 @app.route('/remove/<item>')
 @login_required
 def remove_item(item):

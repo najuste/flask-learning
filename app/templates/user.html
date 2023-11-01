@@ -1,8 +1,11 @@
 {% extends "root.html" %}
 
 {% block main %}
-<h1>Global TODO LIST</h1>
-<div id="list">
+    <div style="display: flex">
+        <h1 style="flex-grow:1">TODO LIST of: {{ user.username }}</h1>
+        <img style="margin: 0 0 2em 2em" src="{{ user.avatar() }}">
+    </div>
+    <div id="list">
     <ul>
         {% for item in items %}
             <li>{{ item }}
@@ -10,9 +13,5 @@
             </li>
         {% endfor %}
     </ul>
-    <form method="POST">
-        <input type="text" name="item" id="">
-        <input type="submit" value="Add to list">
-    </form>
 </div>
 {% endblock %}
