@@ -1,9 +1,9 @@
 from werkzeug.urls import urlsplit
 
-from app import app
+from app import app, db
 from flask import request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
-from app.form import LoginForm
+from app.forms import LoginForm, RegistrationForm
 from app.models.users import User
 
 todo_list = ['Clean my desk', 'Schedule a photo shoot', 'Do a Python KATA']
@@ -29,6 +29,22 @@ def login():
         if request.method == 'POST':
             flash('Form validation error', 'error')
     return render_template('login.html', title='Sign In', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
+
 
 
 @app.route('/logout')
