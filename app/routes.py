@@ -1,13 +1,19 @@
-from werkzeug.urls import urlsplit
-
 from app import app, db
 from flask import request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.urls import urlsplit
+from datetime import datetime
+
 from app.forms import LoginForm, RegistrationForm
 from app.models.users import User
 
 todo_list = ['Clean my desk', 'Schedule a photo shoot', 'Do a Python KATA']
 
+@app.before_request # decorator func executed right before the view function
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

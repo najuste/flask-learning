@@ -1,10 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "root.html" %}
+
+{% block content %}
+    {% if error == "404" %}
+        <h1>File Not Found</h1>
+    {% elif error == "500" %}
+        <h1>An unexpected error has occurred</h1>
+        <p>The administrator has been notified. Sorry for the inconvenience!</p>
+    {% endif %}
+    <p><a href="{{ url_for('index') }}">Back</a></p>
+{% endblock %}
