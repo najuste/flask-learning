@@ -1,6 +1,7 @@
+from datetime import datetime
 from hashlib import md5
-
 from werkzeug.security import generate_password_hash, check_password_hash
+
 from app import db, login
 from flask_login import UserMixin
 
@@ -17,6 +18,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     tasks = db.relationship('Task', backref='author', lazy='dynamic')
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         """method of how the class is going to be printed"""

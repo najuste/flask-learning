@@ -1,3 +1,4 @@
+import requests
 from app import app, db
 from flask import request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
@@ -6,14 +7,43 @@ from datetime import datetime
 
 from app.forms import LoginForm, RegistrationForm
 from app.models.users import User
+from config import Config
 
-todo_list = ['Clean my desk', 'Schedule a photo shoot', 'Do a Python KATA']
 
-@app.before_request # decorator func executed right before the view function
+def get_global_todo():
+    url = f"{Config.API}/tasks"
+    try:
+        response = requests.get(url, timeout=5)
+        print(f'got response {response}')
+
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        content_type = response.headers.get('content-type', '')
+        if 'application/json' in content_type:
+            return {'success': response.json()}
+        else:
+            return {'error': 'Response is not in JSON format'}
+    except requests.exceptions.RequestException as e:
+        return {'error': f'Request failed: {str(e)}'}
+    except Exception as e:
+        return {'error': f'An unexpected error occurred: {str(e)}'}
+
+
+def add_to_global_todo(item: str):
+    url = f"{Config.API}/tasks/add"
+    try:
+        response = requests.post(url, data=item)
+        response.raise_for_status()
+        return {'success': response.json()}
+    except requests.exceptions.RequestException as e:
+        return {'error': f'Request failed: {str(e)}'}
+
+
+@app.before_request  # decorator func executed right before the view function
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -24,8 +54,8 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and user.is_password_correct(form.password.data):
             login_user(user, remember=form.remember_me.data)  # it log-ins user and sets it  to the current_user
-            next_page = request.args.get('next') # the @login-required provides next query param to use for redirect
-            if not next_page or urlsplit(next_page).netloc != '': # if location is not relative redirect to index only
+            next_page = request.args.get('next')  # the @login-required provides next query param to use for redirect
+            if not next_page or urlsplit(next_page).netloc != '':  # if location is not relative redirect to index only
                 next_page = url_for('index')
             return redirect(next_page)
         else:
@@ -52,7 +82,6 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-
 @app.route('/logout')
 def logout():
     logout_user()
@@ -60,12 +89,15 @@ def logout():
 
 
 @app.route('/', methods=['GET', 'POST'])
-@login_required # this will redirect with query params
+@login_required  # this will redirect with query params
 def index():
-    global todo_list  # define it is globally avail!
+    todo = []
+    todo_response = get_global_todo()
+    if 'success' in todo_response:
+        todo = todo_response['success']['tasks']
     if request.method == 'POST':
-        todo_list.append(request.form['item'])
-    return render_template('main.html', items=todo_list)
+        todo = add_to_global_todo(request.form['item'])
+    return render_template('main.html', items=todo)
 
 
 @app.route('/user/<username>')
@@ -76,7 +108,7 @@ def user(username):
         {'author': given_user, 'task': 'Todo #1'},
         {'author': given_user, 'task': 'Todo #2'}
     ]
-    todo_items=[item['task'] for item in todo_list]
+    todo_items = [item['task'] for item in todo_list]
     return render_template('user.html', user=given_user, items=todo_items)
 
 
