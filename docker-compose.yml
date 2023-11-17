@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./app
+    container_name: todo-flask-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ${PWD}/app:/app
+      - ${PWD}/models:/models
+      - ${PWD}/migrations:/migrations
+      - ${PWD}/app.db:/app.db
+      - ${PWD}/db.py:/db.py
+      - ${PWD}/conf.py:/conf.py
+    networks:
+      - local-network
+    environment:
+    - API=http://host.docker.internal:5001/api
+
+  api:
+    build:
+      context: ./api
+    container_name: todo-flask-api
+    ports:
+      - "5001:5001"
+    volumes:
+      - ${PWD}/api:/api
+      - ${PWD}/models:/models
+      - ${PWD}/migrations:/migrations
+      - ${PWD}/app.db:/app.db
+      - ${PWD}/db.py:/db.py
+      - ${PWD}/conf.py:/conf.py
+    networks:
+      - local-network
+
+networks:
+  local-network:

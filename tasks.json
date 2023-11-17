@@ -1,0 +1,14 @@
+{
+    "tasks": [
+      {
+        "type": "docker-run",
+        "label": "docker-run: debug",
+        "dependsOn": ["docker-build"],
+        "python": {
+          "args": ["runserver", "0.0.0.0:5000", "--nothreading", "--noreload"],
+          "file": "todo.py"
+        }
+      }
+    ]
+  }
+  

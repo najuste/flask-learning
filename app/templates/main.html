@@ -1,18 +1,17 @@
-{% extends "root.html" %}
-
-{% block main %}
+{% extends "root.html" %} {% block main %}
 <h1>Global TODO LIST</h1>
 <div id="list">
-    <ul>
-        {% for item in items %}
-            <li>{{ item }}
-                <a href="{{ url_for('remove_item', item=item )}}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <form method="POST">
-        <input type="text" name="item" id="">
-        <input type="submit" value="Add to list">
-    </form>
+	<ul>
+		{% for item in items %}
+		<li>
+			{{ item }}
+			<a href="{{ url_for('main.remove_item', item=item )}}">Delete</a>
+		</li>
+		{% endfor %}
+	</ul>
+	<form method="POST">
+		<input type="text" name="item" id="" />
+		<input type="submit" value="Add to list" />
+	</form>
 </div>
 {% endblock %}

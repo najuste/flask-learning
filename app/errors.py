@@ -1,5 +1,6 @@
 from flask import render_template
-from app import app, db
+from app import app
+from db import engine as db
 
 
 @app.errorhandler(404)

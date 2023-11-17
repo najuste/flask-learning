@@ -1,39 +1,44 @@
-from flask import Flask
-from flask_login import LoginManager
+import sys
+import os
 
-from config import Config
-from flask_sqlalchemy import SQLAlchemy
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from flask import Flask, render_template
+from flask_login import LoginManager, UserMixin
 from flask_migrate import Migrate
 
-from flask_swagger_ui import get_swaggerui_blueprint
+from db import engine
+from conf import AppConfig, basedir
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_object(AppConfig)
+engine.init_app(app)
+migrate = Migrate(app, engine)
+
 app.debug = True
 
-swaggerui_blueprint = get_swaggerui_blueprint(
-    Config.SWAGGER_URL,  # Swagger UI static files will be mapped to '{SWAGGER_URL}/dist/'
-    Config.API_URL,
-    config={  # Swagger UI config overrides
-        'app_name': "Todo application"
-    },
-    # oauth_config={  # OAuth config. See https://github.com/swagger-api/swagger-ui#oauth2-configuration .
-    #    'clientId': "your-client-id",
-    #    'clientSecret': "your-client-secret-if-required",
-    #    'realm': "your-realms",
-    #    'appName': "your-app-name",
-    #    'scopeSeparator': " ",
-    #    'additionalQueryStringParams': {'test': "hello"}
-    # }
-)
-app.register_blueprint(swaggerui_blueprint)
-
-
-# setting the log_in view to use for the users who are not logged in and try to view protected page
 login = LoginManager(app)
-login.login_view = 'login'
+login.login_view = "login"
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
-from app import routes, models, errors
+class User(UserMixin):
+    pass
+
+
+@login.user_loader
+def load_user(user_id):
+    # Replace this with the logic to load a user from your database
+    user = User()
+    user.id = user_id
+    return user
+
+
+from app.routes import main_bp
+
+app.register_blueprint(main_bp)
+
+# careful to import the routes and errors after creating the app,
+from app import errors
+
+if __name__ == "__main__":
+    app.run(port=5000, host="0.0.0.0")
