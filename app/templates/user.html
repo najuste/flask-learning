@@ -1,18 +1,19 @@
-{% extends "root.html" %}
-
-{% block main %}
-    <div style="display: flex">
-        <h1 style="flex-grow:1">TODO LIST of: {{ user.username }}</h1>
-        <img style="margin: 0 0 2em 2em" src="{{ user.avatar() }}">
-    </div>
-    {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
-    <div id="list">
-    <ul>
-        {% for item in items %}
-            <li>{{ item }}
-                <a href="{{ url_for('remove_item', item=item )}}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
+{% extends "root.html" %} {% block main %}
+<div style="display: flex">
+	<h1 style="flex-grow: 1">TODO LIST of: {{ user.username }}</h1>
+	<img style="margin: 0 0 2em 2em" src="{{ user.avatar() }}" />
+</div>
+{% if user.last_seen %}
+<p>Last seen on: {{ user.last_seen }}</p>
+{% endif %}
+<div id="list">
+	<ul>
+		{% for item in items %}
+		<li>
+			{{ item }}
+			<a href="{{ url_for('main.remove_item', item=item )}}">Delete</a>
+		</li>
+		{% endfor %}
+	</ul>
 </div>
 {% endblock %}

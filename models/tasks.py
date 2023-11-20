@@ -9,7 +9,7 @@ class Task(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     created_by_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     assigned_to_id = db.Column(db.Integer, nullable=True)
-    done = db.Column(db.Boolean)
+    done = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         """method of how the class is going to be printed"""

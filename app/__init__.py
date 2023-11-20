@@ -13,7 +13,10 @@ from config import AppConfig, basedir
 app = Flask(__name__)
 app.config.from_object(AppConfig)
 engine.init_app(app)
-migrate = Migrate(app, engine)
+migrations_dir = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "migrations"
+)
+migrate = Migrate(app, engine, directory=migrations_dir)
 
 app.debug = True
 

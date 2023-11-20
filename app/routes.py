@@ -1,3 +1,4 @@
+from urllib.parse import urlsplit
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
 
@@ -7,8 +8,7 @@ from datetime import datetime
 from config import AppConfig
 from models.users import User
 from db import engine as db
-from request_handling import RequestMethod, request_handling
-
+from app.request_handling import RequestMethod, request_handling
 from app.forms import LoginForm, RegistrationForm
 from app import app
 
@@ -40,11 +40,11 @@ def before_request():
 @main_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        return redirect(url_for("main.index"))
     form = LoginForm()
     if (
         form.validate_on_submit()
-    ):  # on GET this will return false, so no need to check request method type
+    ):  # GET will return false, so no need to check request method type
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and user.is_password_correct(form.password.data):
             login_user(
@@ -52,40 +52,40 @@ def login():
             )  # it log-ins user and sets it  to the current_user
             next_page = request.args.get(
                 "next"
-            )  # the @login-required provides next query param to use for redirect
+            )  # the @login-required provides query param to use for redirect
             if (
                 not next_page or urlsplit(next_page).netloc != ""
             ):  # if location is not relative redirect to index only
-                next_page = url_for("index")
+                next_page = url_for("main.index")
             return redirect(next_page)
         else:
             flash("Invalid user name or password")
-            return redirect(url_for("login"))
+            return redirect(url_for("main.login"))
     else:
         if request.method == "POST":
             flash("Form validation error", "error")
     return render_template("login.html", title="Sign In", form=form)
 
 
-# @app.route("/register", methods=["GET", "POST"])
-# def register():
-#     if current_user.is_authenticated:
-#         return redirect(url_for("index"))
-#     form = RegistrationForm()
-#     if form.validate_on_submit():
-#         user = User(username=form.username.data, email=form.email.data)
-#         user.set_password(form.password.data)
-#         db.session.add(user)
-#         db.session.commit()
-#         flash("Congratulations, you are now a registered user!")
-#         return redirect(url_for("login"))
-#     return render_template("register.html", title="Register", form=form)
+@main_bp.route("/register", methods=["GET", "POST"])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash("Congratulations, you are now a registered user!")
+        return redirect(url_for("main.login"))
+    return render_template("register.html", title="Register", form=form)
 
 
 @main_bp.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("main.index"))
 
 
 @main_bp.route("/", methods=["GET", "POST"])
