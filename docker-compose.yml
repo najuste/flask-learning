@@ -13,7 +13,7 @@ services:
       - ${PWD}/migrations:/migrations
       - ${PWD}/app.db:/app.db
       - ${PWD}/db.py:/db.py
-      - ${PWD}/conf.py:/conf.py
+      - ${PWD}/config.py:/config.py
     networks:
       - local-network
     environment:
@@ -31,7 +31,7 @@ services:
       - ${PWD}/migrations:/migrations
       - ${PWD}/app.db:/app.db
       - ${PWD}/db.py:/db.py
-      - ${PWD}/conf.py:/conf.py
+      - ${PWD}/config.py:/config.py
     networks:
       - local-network
 
