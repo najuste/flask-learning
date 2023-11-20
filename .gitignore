@@ -1,0 +1,9 @@
+.env
+.docker.env
+.dockerignore
+venv
+tasks.json
+.vscode
+.idea
+.devcontainer
+__pycache__

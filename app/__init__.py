@@ -8,7 +8,7 @@ from flask_login import LoginManager, UserMixin
 from flask_migrate import Migrate
 
 from db import engine
-from conf import AppConfig, basedir
+from config import AppConfig, basedir
 
 app = Flask(__name__)
 app.config.from_object(AppConfig)
@@ -17,6 +17,7 @@ migrate = Migrate(app, engine)
 
 app.debug = True
 
+# setting the log_in view to use for the users who are not logged in and try to view protected page
 login = LoginManager(app)
 login.login_view = "login"
 

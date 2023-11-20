@@ -4,7 +4,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 # from werkzeug.urls import urlsplit
 from datetime import datetime
 
-from conf import AppConfig
+from config import AppConfig
 from models.users import User
 from db import engine as db
 from request_handling import RequestMethod, request_handling
