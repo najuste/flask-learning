@@ -25,6 +25,11 @@ login = LoginManager(app)
 login.login_view = "login"
 
 
+@login.user_loader  # helps in storing the uid of Flask user session and this is it's registration
+def load_user(id: str):
+    return User.query.get(int(id))
+
+
 class User(UserMixin):
     pass
 

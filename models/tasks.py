@@ -11,6 +11,16 @@ class Task(db.Model):
     assigned_to_id = db.Column(db.Integer, nullable=True)
     done = db.Column(db.Boolean, default=False)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "created_by": self.created_by_id,
+            "timestamp": self.timestamp,
+            "done": self.done
+            # Add more fields as needed
+        }
+
     def __repr__(self):
         """method of how the class is going to be printed"""
         return "<Task {}>".format(self.title)

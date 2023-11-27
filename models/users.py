@@ -3,16 +3,9 @@ from hashlib import md5
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from db import engine as db
-from app import login
-from flask_login import UserMixin
 
 
-@login.user_loader  # helps in storing the uid of Flask user session and this is it's registration
-def load_user(id: str):
-    return User.query.get(int(id))
-
-
-class User(UserMixin, db.Model):
+class User(db.Model):
     # __tablename__ = "if the snake case class name is not desired"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(24), index=True, unique=True)

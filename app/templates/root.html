@@ -42,3 +42,31 @@
 		<main>{% block main %} {% endblock %}</main>
 	</body>
 </html>
+
+<script>
+	document.querySelector("#todo-form").addEventListener("submit", (e) => {
+		e.preventDefault();
+	});
+
+	document.querySelector("#submit-btn").addEventListener("click", () => {
+		const item = document.querySelector("#todo-input").value;
+		const data = JSON.stringify({ title: item });
+
+		fetch("/", {
+			method: "POST",
+			body: data,
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				// Handle the response data
+				console.log("---got data", data);
+			})
+			.catch((error) => {
+				// Handle any errors
+				console.error(error);
+			});
+	});
+</script>

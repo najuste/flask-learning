@@ -18,8 +18,12 @@ class RequestMethod(Enum):
 
 
 def request_handling(request_method, url, **kwargs):
+    headers = {"Content-Type": "application/json"}
     try:
-        response = requests.request(method=request_method.name, url=url, **kwargs)
+        response = requests.request(
+            method=request_method.name, url=url, headers=headers, **kwargs
+        )
+        print("request_handling response", response)
         response.raise_for_status()
         return ResponseWrapper(success=True, data=response.json())
     except requests.exceptions.HTTPError as error:

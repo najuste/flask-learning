@@ -1,12 +1,13 @@
-from urllib.parse import urlsplit
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
-
-# from werkzeug.urls import urlsplit
+import json
+from werkzeug.urls import urlsplit
 from datetime import datetime
 
 from config import AppConfig
 from models.users import User
+from models.tasks import Task
+
 from db import engine as db
 from app.request_handling import RequestMethod, request_handling
 from app.forms import LoginForm, RegistrationForm
@@ -20,9 +21,16 @@ def get_global_todo():
     return request_handling(RequestMethod.GET, url, timeout=5)
 
 
-def add_to_global_todo(item: str):
-    url = f"{AppConfig.API}/tasks/{item}"
-    return request_handling(RequestMethod.POST, url)
+def add_to_global_todo(request_data):
+    print("add_to_global_todo")
+
+    url = f"{AppConfig.API}/tasks"
+    task = {
+        "title": request_data["title"],
+        "created_by": current_user.get_id(),
+    }
+    print("task", task)
+    return request_handling(RequestMethod.POST, url, json=task)
 
 
 def remove_from_todo(item: str):
@@ -70,7 +78,7 @@ def login():
 @main_bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        return redirect(url_for("main.index"))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
@@ -92,8 +100,7 @@ def logout():
 def index():
     todo = []
     if request.method == "POST":
-        item = request.form["item"]
-        response = add_to_global_todo(item)
+        response = add_to_global_todo(request.json)
         if response.success:
             todo = response.data["tasks"]
     else:
